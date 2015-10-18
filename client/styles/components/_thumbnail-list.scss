@@ -1,0 +1,13 @@
+$gutter-width: 15px;
+.thumbnail-list {
+  margin-left: -$gutter-width;
+  margin-right: -$gutter-width;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  > .thumbnail-container {
+    width: 150px;
+    padding-left: $gutter-width;
+    margin-bottom: 15px;
+  }
+}

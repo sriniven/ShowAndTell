@@ -1,0 +1,22 @@
+.thumbnail {
+  text-align: center;
+  border: solid 1px $thumbnail-border;
+  border-radius: 3px;
+  box-shadow: #503D2E 0 0 3px;
+  cursor: pointer;
+  overflow: hidden;
+
+  > .image {
+    height: 150px;
+    width: 133px;
+    background-size: cover;
+    background-position: 50% 50%;
+    transition: all 0.1s ease-in;
+  }
+
+  &:hover {
+    > .image {
+      transform: scale(1.1);
+    }
+  }
+}

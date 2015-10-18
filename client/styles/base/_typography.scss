@@ -1,0 +1,10 @@
+$bodyFont: 'Indie Flower', cursive;
+$headingFont: 'Amatic SC', cursive;
+
+h1, h2, h3 {
+  font-family: $headingFont;
+}
+
+body {
+  font-family: $bodyFont;
+}

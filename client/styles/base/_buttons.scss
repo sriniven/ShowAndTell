@@ -1,0 +1,11 @@
+.button {
+  margin-right: 15px;
+  border: none;
+  box-shadow: 1px 1px 3px #333;
+  border-radius: 4px;
+
+  &.-quiz {
+    background-color: $quiz-button-color;
+    color: $background-color;
+  }
+}

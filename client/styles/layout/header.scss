@@ -1,0 +1,61 @@
+header {
+  background-color: $secondary-color;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  &.-quiz {
+    background-color: $quiz-button-color;
+    display: block;
+    position: relative;
+    text-align: center;
+    h1 {
+      text-align: center;
+    }
+    button {
+      position: absolute;
+      left: 15px;
+      top: 30%;
+    }
+  }
+
+  h1 {
+    margin: 0;
+    color: $background-color;
+  }
+
+  nav {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    > .quiz-button {
+      margin-right: 15px;
+      background-color: $quiz-button-color;
+      border: none;
+      color: $background-color;
+      box-shadow: 1px 1px 3px #333;
+    }
+
+    > .search {
+      padding-left: .5em;
+      padding-right: .5em;
+      @media(max-width: 420px) {
+        display: none;
+      }
+    }
+  }
+}
+
+.search--mobile {
+  display: none;
+  input {
+    padding-left: .5em;
+    padding-right: .5em;
+    width: 100%;
+  }
+  @media(max-width: 420px) {
+    display: block;
+  }
+}
