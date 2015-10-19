@@ -38,3 +38,6 @@ If you change anything in this config, you need to do `sudo restart st` or `sudo
 
 ## Images structure
 Images should be there within the `ST_IMAGES_PATH` environment variable that we have set above. Images should be within `images` (lowercase) folder in the `ST_IMAGES_PATH` folder. Then any folder directly within `images` is a Gallery. Any image within those galleries will be shown as pictures. Thumbnails get generated automatically. But for the gallery thumbnail, there needs to be a `gallery_cover.jpg` within the respective folders.
+
+## Editing Favicon
+Upload your new icon to http://realfavicongenerator.net/ and download the zip folder (with the default options). Replace all the files (except index.html) from the `public` folder with the ones in the ZIP folder. Then do a `git push` to deploy
