@@ -104,7 +104,7 @@ module.exports = function (options, doneCallback) {
                         });
                     }
                 ], function () {
-                    async.map(imagePaths, processImage, function (err, result) {
+                    async.mapSeries(imagePaths, processImage, function (err, result) {
                         var collectionObject = {
                             title: capitalize(collection.name),
                             picture: path.join('/thumbs/', collection.name, 'gallery_cover.jpg'),
