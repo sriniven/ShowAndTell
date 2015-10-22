@@ -43,7 +43,7 @@ module.exports = function (options, doneCallback) {
             .resize(133, 150)
             .write(thumbPath, function (err) {
                 if (err) {
-                    console.log('Error', err);
+                    console.error('Error', err);
                     callback(err);
                 }
                 callback(null, '/' + path.relative(outDir, thumbPath));
@@ -56,7 +56,7 @@ module.exports = function (options, doneCallback) {
             .resize(800, 600)
             .write(imagePath, function (err) {
                 if (err) {
-                    console.log('Error', err);
+                    console.error('Error', err);
                     callback(err);
                 }
                 callback(null, '/' + path.relative(outDir, imagePath));
@@ -75,6 +75,9 @@ module.exports = function (options, doneCallback) {
                 }
             }
             , function (err, results) {
+                if(err) {
+                    callback(err);
+                }
                 results.title = capitalize(path.basename(image.name, path.extname(image.name)));
                 callback(null, results);
             });
@@ -89,12 +92,14 @@ module.exports = function (options, doneCallback) {
             async.parallel(
                 [
                     function (cb) {
-                        mkdirp(path.join(thumbsDir, collection.name), null, function () {
+                        mkdirp(path.join(thumbsDir, collection.name), null, function (err) {
+                            console.error(err);
                             cb();
                         });
                     },
                     function (cb) {
-                        mkdirp(path.join(imagesOutDir, collection.name), null, function () {
+                        mkdirp(path.join(imagesOutDir, collection.name), null, function (err) {
+                            console.error(err);
                             cb();
                         });
                     }
@@ -105,7 +110,7 @@ module.exports = function (options, doneCallback) {
                             picture: path.join('/thumbs/', collection.name, 'gallery_cover.jpg'),
                             pictures: result.filter(function(p){return p.title.toLowerCase().indexOf('gallery_cover') === -1;})
                         };
-                        callback(null, collectionObject);
+                        callback(err, collectionObject);
                     });
                 }
             );
@@ -134,7 +139,9 @@ module.exports = function (options, doneCallback) {
                 });
                 console.log(collections);
                 async.map(collectionDirs, processCollection, function (err, data) {
-                    writeFile(data);
+                    if(!err) {
+                        writeFile(data);
+                    }
                     doneCallback();
                 });
             });
