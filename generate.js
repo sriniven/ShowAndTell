@@ -29,6 +29,20 @@ var generateActualImage = function (imagePath, outPath) {
     resizeImage(imagePath, {x: 800, y: 600}, outPath);
 };
 
+var getTitleAndId = function(name) {
+    var imageName = path.basename(name, path.extname(name));
+    var splits = imageName.split('-');
+    var number = parseInt(splits[0]);
+    var title;
+    if(isNaN(number)) {
+        number = 0;
+        title = name;
+    } else {
+        title = splits.slice(1,splits.length).join(' ');
+    }
+    return {id: number, title: title};
+};
+
 module.exports = function (options, doneCallback) {
     var inDir = options.inDir,
         outDir = options.outDir,
@@ -120,7 +134,9 @@ module.exports = function (options, doneCallback) {
                 if (err) {
                     callback(err);
                 }
-                results.title = capitalize(path.basename(image.name, path.extname(image.name)));
+                var titleAndId = getTitleAndId(image.name);
+                results.title = titleAndId.title;
+                results.id = titleAndId.id;
                 callback(null, results);
             });
     };
@@ -147,12 +163,15 @@ module.exports = function (options, doneCallback) {
                     }
                 ], function () {
                     async.mapSeries(imagePaths, processImage, function (err, result) {
+                        var pictures = result.filter(function (p) {
+                            return p.title.toLowerCase().indexOf('gallery_cover') === -1;
+                        }).sort(function(p1, p2) {
+                            return p1.id - p2.id;
+                        });
                         var collectionObject = {
                             title: capitalize(collection.name),
                             picture: path.join('/thumbs/', collection.name, 'gallery_cover.jpg'),
-                            pictures: result.filter(function (p) {
-                                return p.title.toLowerCase().indexOf('gallery_cover') === -1;
-                            })
+                            pictures: pictures
                         };
                         callback(err, collectionObject);
                     });
