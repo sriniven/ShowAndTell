@@ -39,28 +39,70 @@ module.exports = function (options, doneCallback) {
 
     var generateThumb = function (image, callback) {
         var thumbPath = path.join(thumbsDir, image.collection, image.name);
-        gm(image.filename)
-            .resize(133, 150)
-            .write(thumbPath, function (err) {
-                if (err) {
-                    console.error('Error', err);
-                    callback(err);
+        var generate = function () {
+            gm(image.filename)
+                .resize(133, 150)
+                .write(thumbPath, function (err) {
+                    if (err) {
+                        console.error('Error', err);
+                        callback(err);
+                    }
+                    callback(null, '/' + path.relative(outDir, thumbPath));
+                });
+        };
+        fs.stat(thumbPath, function (err, destStats) {
+            if (err) { // If thumb does not exist, generate it
+                generate();
+                console.log('DOES NOT EXIST: ', image.filename);
+                return;
+            }
+            // If it exists, compare for modified times
+            console.log('EXISTS: ', image.filename);
+            fs.stat(image.filename, function (err, sourceStats) {
+                if (err) {//Shouldn't happen
+                    callback(null, '/' + path.relative(outDir, thumbPath));
                 }
-                callback(null, '/' + path.relative(outDir, thumbPath));
+                if (sourceStats.mtime > destStats.mtime) {
+                    generate();
+                } else {
+                    callback(null, '/' + path.relative(outDir, thumbPath));
+                }
             });
+        });
     };
 
     var generateImage = function (image, callback) {
         var imagePath = path.join(imagesOutDir, image.collection, image.name);
-        gm(image.filename)
-            .resize(800, 600)
-            .write(imagePath, function (err) {
-                if (err) {
-                    console.error('Error', err);
-                    callback(err);
+        var generate = function () {
+            gm(image.filename)
+                .resize(800, 600)
+                .write(imagePath, function (err) {
+                    if (err) {
+                        console.error('Error', err);
+                        callback(err);
+                    }
+                    callback(null, '/' + path.relative(outDir, imagePath));
+                });
+        };
+        fs.stat(imagePath, function (err, destStats) {
+            if (err) { // If thumb does not exist, generate it
+                generate();
+                console.log('DOES NOT EXIST: ', image.filename);
+                return;
+            }
+            // If it exists, compare for modified times
+            console.log('EXIST: ', image.filename);
+            fs.stat(image.filename, function (err, sourceStats) {
+                if (err) {//Shouldn't happen
+                    callback(null, '/' + path.relative(outDir, imagePath));
                 }
-                callback(null, '/' + path.relative(outDir, imagePath));
+                if (sourceStats.mtime > destStats.mtime) {
+                    generate();
+                } else {
+                    callback(null, '/' + path.relative(outDir, imagePath));
+                }
             });
+        });
     };
 
     var processImage = function (image, callback) {
@@ -75,7 +117,7 @@ module.exports = function (options, doneCallback) {
                 }
             }
             , function (err, results) {
-                if(err) {
+                if (err) {
                     callback(err);
                 }
                 results.title = capitalize(path.basename(image.name, path.extname(image.name)));
@@ -108,7 +150,9 @@ module.exports = function (options, doneCallback) {
                         var collectionObject = {
                             title: capitalize(collection.name),
                             picture: path.join('/thumbs/', collection.name, 'gallery_cover.jpg'),
-                            pictures: result.filter(function(p){return p.title.toLowerCase().indexOf('gallery_cover') === -1;})
+                            pictures: result.filter(function (p) {
+                                return p.title.toLowerCase().indexOf('gallery_cover') === -1;
+                            })
                         };
                         callback(err, collectionObject);
                     });
@@ -123,29 +167,16 @@ module.exports = function (options, doneCallback) {
         fs.writeFile(dataFilePath, fileContents);
     };
 
-    async.parallel(
-        [
-            function (cb) {
-                remove(thumbsDir, null, cb)
-            },
-            function (cb) {
-                remove(imagesOutDir, null, cb)
+    fs.readdir(imagesDir, function (err, collections) {
+        var collectionDirs = removeHidden(collections).map(function (c) {
+            return {name: c, dir: path.join(imagesDir, c)};
+        });
+        async.map(collectionDirs, processCollection, function (err, data) {
+            if (!err) {
+                writeFile(data);
             }
-        ],
-        function (err) {
-            fs.readdir(imagesDir, function (err, collections) {
-                var collectionDirs = removeHidden(collections).map(function (c) {
-                    return {name: c, dir: path.join(imagesDir, c)};
-                });
-                console.log(collections);
-                async.map(collectionDirs, processCollection, function (err, data) {
-                    if(!err) {
-                        writeFile(data);
-                    }
-                    doneCallback();
-                });
-            });
-        }
-    );
+            doneCallback();
+        });
+    });
 
 };
