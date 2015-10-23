@@ -40,7 +40,7 @@ var getTitleAndId = function(name) {
     } else {
         title = splits.slice(1,splits.length).join(' ');
     }
-    return {id: number, title: title};
+    return {id: number, title: capitalize(title)};
 };
 
 module.exports = function (options, doneCallback) {
