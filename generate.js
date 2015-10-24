@@ -44,7 +44,7 @@ var getTitleAndId = function(name) {
     return {id: number, title: capitalize(title)};
 };
 
-module.exports = function (options, doneCallback) {
+module.exports = function (options, logger, doneCallback) {
     var inDir = options.inDir,
         outDir = options.outDir,
         dataFilePath = path.join(outDir, 'data.js'),
@@ -68,18 +68,19 @@ module.exports = function (options, doneCallback) {
         fs.stat(thumbPath, function (err, destStats) {
             if (err) { // If thumb does not exist, generate it
                 generate();
-                console.log('DOES NOT EXIST: ', image.filename);
+                logger('NEW FILE - generating:' + image.filename);
                 return;
             }
             // If it exists, compare for modified times
-            console.log('EXISTS: ', image.filename);
             fs.stat(image.filename, function (err, sourceStats) {
                 if (err) {//Shouldn't happen
                     callback(null, '/' + path.relative(outDir, thumbPath));
                 }
                 if (sourceStats.mtime > destStats.mtime) {
+                    logger('FILE MODIFIED - generating: ' + image.filename);
                     generate();
                 } else {
+                    logger('SAME FILE - reusing: ' + image.filename);
                     callback(null, '/' + path.relative(outDir, thumbPath));
                 }
             });
@@ -102,11 +103,9 @@ module.exports = function (options, doneCallback) {
         fs.stat(imagePath, function (err, destStats) {
             if (err) { // If thumb does not exist, generate it
                 generate();
-                console.log('DOES NOT EXIST: ', image.filename);
                 return;
             }
             // If it exists, compare for modified times
-            console.log('EXIST: ', image.filename);
             fs.stat(image.filename, function (err, sourceStats) {
                 if (err) {//Shouldn't happen
                     callback(null, '/' + path.relative(outDir, imagePath));
@@ -121,7 +120,6 @@ module.exports = function (options, doneCallback) {
     };
 
     var processImage = function (image, callback) {
-        console.log('PROCESSING Image: ', image.name);
         async.parallel(
             {
                 thumb: function (cb) {
@@ -143,7 +141,6 @@ module.exports = function (options, doneCallback) {
     };
 
     var processCollection = function (collection, callback) {
-        console.log('PROCESSING COLLECTION: ', collection.name);
         fs.readdir(collection.dir, function (err, images) {
             var imagePaths = removeHidden(images).map(function (image) {
                 return {name: image, collection: collection.name, filename: path.join(collection.dir, image)};
