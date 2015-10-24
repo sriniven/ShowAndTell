@@ -56,7 +56,9 @@ module.exports = function (options, logger, doneCallback) {
         var thumbPath = path.join(thumbsDir, image.collection, image.name);
         var generate = function () {
             gm(image.filename)
-                .resize(133, 150)
+                .resize(133, 150, '^')
+                .gravity('Center')
+                .extent(133, 150)
                 .write(thumbPath, function (err) {
                     if (err) {
                         console.error('Error', err);
