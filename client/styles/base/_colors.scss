@@ -3,11 +3,14 @@ $wp-color: #503D2E;
 $pz-color: #D54B1A;
 $es-color: #E3A72F;
 $ll-color: #F0ECC9;
+$red: #F2536E;
+$grey: #333;
 
-$primary-color: $pz-color;
+$header-background-color: $grey;
+$primary-color: $red;
 $secondary-color: $pp-color;
 $background-color: $ll-color;
 $thumbnail-border: $wp-color;
-$quiz-button-color: $pz-color;
-$modal-header-color: $wp-color;
+$quiz-button-color: $red;
+$modal-header-color: $grey;
 $light-color: $ll-color;
