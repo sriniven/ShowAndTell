@@ -56,7 +56,7 @@ class App extends React.Component {
         return (
             <div id="wrapper">
                 <header>
-                    <h1>Bharathanatya Mudhras</h1>
+                    <h1>Mudhras</h1>
                     <nav>
                         <button onClick={() => dispatch(launchQuiz())} className="button -quiz">Quiz</button>
                         <input className="search" type="text" placeholder="Search" onKeyUp={(event) => {dispatch(setSearchTerm(event.target.value))}} />
