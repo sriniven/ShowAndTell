@@ -5,6 +5,13 @@
   box-shadow: #503D2E 0 0 3px;
   cursor: pointer;
   overflow: hidden;
+  display: block;
+  color: $grey;
+  text-decoration: none;
+
+  &:visited {
+    color: $grey;
+  }
 
   > .image {
     height: 150px;
